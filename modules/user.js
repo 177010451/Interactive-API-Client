@@ -1,6 +1,10 @@
 /* init module */
 const collectionName = 'users';
 const dataSource = require('./dataSource');
+const collection = dataSource.model(collectionName, {
+	email: { type: String },
+	password: { type: String }
+});
 
 /* exports funtion */
 exports.login = function(req, res) {
@@ -14,7 +18,7 @@ exports.login = function(req, res) {
 	item['email'] = email;
 
 	//Check Login
-	dataSource.db.collection(collectionName, function(err, collection) {
+	//dataSource.db.collection(collectionName, function(err, collection) {
         collection.findOne(item, function(err, result) {
 			if (err) {
 				console.log(err);
@@ -31,7 +35,7 @@ exports.login = function(req, res) {
 				res.jsonp(["0","Login Fail: User not found"]);
 			}
         });
-    });
+    //});
 }
 
 exports.signup = function(req, res) {
@@ -45,7 +49,7 @@ exports.signup = function(req, res) {
 	item['email'] = email;
 
 	//Check Login
-	dataSource.db.collection(collectionName, function(err, collection) {
+	//dataSource.db.collection(collectionName, function(err, collection) {
         collection.findOne(item, function(err, result) {
         	if (err) {
 				console.log(err);
@@ -56,8 +60,9 @@ exports.signup = function(req, res) {
 			} else { 
 				//Add Login
 				item['password'] = password;
-				dataSource.db.collection(collectionName, function(err, collection) {
-					collection.insert(item, {safe:true}, function(err, result) {
+				//dataSource.db.collection(collectionName, function(err, collection) {
+					//collection.insert(item, {safe:true}, function(err, result) {
+					collection.create(item, {safe:true}, function(err, result) {
 						if (err) {
 							console.log(err);
 							res.jsonp("0");
@@ -66,8 +71,8 @@ exports.signup = function(req, res) {
 							res.jsonp(["1","Sign up Success"]);
 						}
 					});
-				});
+				//});
 			}
         });
-    });
+    //});
 }

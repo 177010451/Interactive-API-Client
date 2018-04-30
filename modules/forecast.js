@@ -2,6 +2,13 @@
 const url = 'http://api.openweathermap.org/data/2.5/forecast/daily';
 const collectionName = 'forecasts';
 const dataSource = require('./dataSource');
+const collection = dataSource.model(collectionName, {
+	city: { type: Object },
+	cnt: { type: Number },
+	list: { type: Array },
+	dt: { type: Number },
+	date: { type: String }
+});
 
 /* search query parameter convert*/
 var filerItemIndex = function(json){
@@ -58,8 +65,8 @@ exports.query = function(req, res) {
 	var apiQuery = { units: 'metric', appid: "44c39f3fa462f86b3fc88f5678e5c5ff"};
 	apiQuery[apiIndex] = req.params.strValue;
 	
-	dataSource.db.collection(collectionName, function(err, collection) {
-        collection.findOne(dbQuery, function(err, item) {
+	//dataSource.db.collection(collectionName, function(err, collection) {
+		collection.findOne(dbQuery, function(err, item) {
 			if (err) { //return error message if something wrong with MongoDB
 				console.log(err);
 				res.jsonp(err);
@@ -76,7 +83,7 @@ exports.query = function(req, res) {
 				callAPI(req, res, null, dbQuery, apiQuery);
 			}
         });
-    });
+    //});
 }
 
 /* common function*/
@@ -108,7 +115,7 @@ var insertDB = function(item, dbQuery){ //data insert or update
 	if(item.date <= dayStr()){ //Check the data date with current
 		console.log("DB update");
 		item['date'] = d;
-		dataSource.db.collection(collectionName, function(err, collection) {
+		//dataSource.db.collection(collectionName, function(err, collection) {
 	        collection.update(dbQuery, item, function(err, res) {
 				if (err) {
 					console.log(err);
@@ -117,13 +124,14 @@ var insertDB = function(item, dbQuery){ //data insert or update
 					console.log("1 document updated");
 				}
 			});
-		});
+		//});
 	} else {
 		console.log("DB insert");
 		item['date'] = d;
-		dataSource.db.collection(collectionName, function(err, collection) {
-			collection.insert(item, {safe:true}, function(err, result) {});
-		});
+		//dataSource.db.collection(collectionName, function(err, collection) {
+			//collection.insert(item, {safe:true}, function(err, result) {});
+			collection.create(item, {safe:true}, function(err, result) {});
+		//});
 	}
 }
 

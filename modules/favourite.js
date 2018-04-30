@@ -2,6 +2,11 @@
 const collectionName = 'favourites';
 const userCollectionName = 'users';
 const dataSource = require('./dataSource');
+const collection = dataSource.model(collectionName, {
+	email: { type: String },
+	cityname: { type: String }
+});
+const userCollection = dataSource.model(userCollectionName);
 
 exports.getList = function(req, res) {
 	//get parameters
@@ -14,16 +19,16 @@ exports.getList = function(req, res) {
 	item['email'] = email;
 
 	//Check Login
-	dataSource.db.collection(userCollectionName, function(err, collection) {
-        collection.findOne(item, function(err, result) {
+	//dataSource.db.collection(userCollectionName, function(err, collection) {
+		userCollection.findOne(item, function(err, result) {
 			if (err) {
 				console.log(err);
 				res.jsonp(["0","Get Favourites Fail: DB Error"]);
 			} else if (result) { 
 				if(result.password == password){
 					//Check Favourites
-					dataSource.db.collection(collectionName, function(err, collection) {
-				        collection.find(item).toArray(function(err, result) {
+					//dataSource.db.collection(collectionName, function(err, collection) {
+				        collection.find(item, function(err, result) {
 				        	if (err) {
 								console.log(err);
 								res.jsonp(["0","Get Favourites Fail: DB Error"]);
@@ -35,7 +40,7 @@ exports.getList = function(req, res) {
 								res.jsonp(["0","Get Favourites Fail: Record Not Found"]);
 							}
 				        });
-				    });
+				    //});
 				}else{
 					console.log("Wrong Password");
 					res.jsonp(["0","Get Favourites Fail: Wrong Password"]);
@@ -45,7 +50,7 @@ exports.getList = function(req, res) {
 				res.jsonp(["0","Get Favourites Fail: User not found"]);
 			}
         });
-    });
+    //});
 }
 
 exports.add = function(req, res) {
@@ -64,15 +69,15 @@ exports.add = function(req, res) {
 	item['cityname'] = cityname;
 
 	//Check Login
-	dataSource.db.collection(userCollectionName, function(err, collection) {
-        collection.findOne(user, function(err, result) {
+	//dataSource.db.collection(userCollectionName, function(err, collection) {
+        userCollection.findOne(user, function(err, result) {
 			if (err) {
 				console.log(err);
 				res.jsonp(["0","Add Favourites Fail: DB Error"]);
 			} else if (result) { 
 				if(result.password == password){
 					//Check Favourites
-					dataSource.db.collection(collectionName, function(err, collection) {
+					//dataSource.db.collection(collectionName, function(err, collection) {
 				        collection.findOne(item, function(err, result) {
 				        	if (err) {
 								console.log(err);
@@ -82,8 +87,9 @@ exports.add = function(req, res) {
 								res.jsonp(["0","Add Favourites Fail: Record Exist"]);
 							} else {
 								//Add Favourites
-								dataSource.db.collection(collectionName, function(err, collection) {
-									collection.insert(item, {safe:true}, function(err, result) {
+								//dataSource.db.collection(collectionName, function(err, collection) {
+									//collection.insert(item, {safe:true}, function(err, result) {
+									collection.create(item, {safe:true}, function(err, result) {
 										if (err) {
 											console.log(err);
 											res.jsonp("0");
@@ -92,10 +98,10 @@ exports.add = function(req, res) {
 											res.jsonp(["1", "Add Favourites Success"]);
 										}
 									});
-								});
+								//});
 							}
 				        });
-				    });
+				    //});
 				}else{
 					console.log("Wrong Password");
 					res.jsonp(["0","Add Favourites Fail: Wrong Password"]);
@@ -105,7 +111,7 @@ exports.add = function(req, res) {
 				res.jsonp(["0","Add Favourites Fail: User not found"]);
 			}
         });
-    });
+    //});
 }
 
 exports.remove = function(req, res) {
@@ -124,23 +130,23 @@ exports.remove = function(req, res) {
 	item['cityname'] = cityname;
 
 	//Check Login
-	dataSource.db.collection(userCollectionName, function(err, collection) {
-        collection.findOne(user, function(err, result) {
+	//dataSource.db.collection(userCollectionName, function(err, collection) {
+		userCollection.findOne(user, function(err, result) {
 			if (err) {
 				console.log(err);
 				res.jsonp(["0","Remove Favourites Fail: DB Error"]);
 			} else if (result) { 
 				if(result.password == password){
 					//Check Favourites
-					dataSource.db.collection(collectionName, function(err, collection) {
+					//dataSource.db.collection(collectionName, function(err, collection) {
 				        collection.findOne(item, function(err, result) {
 				        	if (err) {
 								console.log(err);
 								res.jsonp(["0","Remove Favourites Fail: DB Error"]);
 							} else if (result) { 
 								//Remove Favourites
-								dataSource.db.collection(collectionName, function(err, collection) {
-									collection.remove(item, {safe:true}, function(err, result) {
+								//dataSource.db.collection(collectionName, function(err, collection) {
+									collection.remove(item, function(err, result) {
 										if (err) {
 											console.log(err);
 											res.jsonp("0");
@@ -149,13 +155,13 @@ exports.remove = function(req, res) {
 											res.jsonp(["1", "Remove Favourites Success"]);
 										}
 									});
-								});
+								//});
 							} else {
 								console.log("Remove Favourites Fail: Record Not Exist");
 								res.jsonp(["0","Remove Favourites Fail: Record Not Exist"]);
 							}
 				        });
-				    });
+				    //});
 				}else{
 					console.log("Wrong Password");
 					res.jsonp(["0","Remove Favourites Fail: Wrong Password"]);
@@ -165,6 +171,6 @@ exports.remove = function(req, res) {
 				res.jsonp(["0","Remove Favourites Fail: User not found"]);
 			}
         });
-    });
+    //});
 }
 
