@@ -2,7 +2,8 @@
 //Init Appication
 var express = require('express');
 var app = express();
-var port = 3000;
+var port = normalizePort(process.env.PORT || '3000');
+
 
 //Object and Funtction
 var weather = require('./modules/weather');
